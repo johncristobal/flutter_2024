@@ -1,5 +1,5 @@
 Flutter tutorial 2024
-Framework mobile basado en Dart para desarrollo de apps Android y iOS
+SDK mobile basado en Dart para desarrollo de apps Android y iOS
 
 * hot reload 
 Visualizar cambios de modo rapido
