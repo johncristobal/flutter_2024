@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:s5_yesnoapp/domain/entities/message.dart';
+import 'package:s5_yesnoapp/presentation/providers/chat_provider.dart';
 import 'package:s5_yesnoapp/presentation/widgtes/her_msg.dart';
 import 'package:s5_yesnoapp/presentation/widgtes/msg_field.dart';
 import 'package:s5_yesnoapp/presentation/widgtes/my_msg.dart';
@@ -33,6 +36,9 @@ class _ChatView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final provider = context.watch<ChatProvider>();
+
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -40,15 +46,19 @@ class _ChatView extends StatelessWidget {
           children: [
             Expanded(
               child: ListView.builder(
-                itemCount: 100,
+                controller: provider.controller,
+                itemCount: provider.messageList.length,
                 itemBuilder: (context, index) {
-                  return (index % 2 == 0)
-                  ? const HerMessagBuble()
-                  : const MyMessagBuble();
+                  final msg = provider.messageList[index];
+                  return (msg.from == From.hers)
+                  ? HerMessagBuble(message: msg)
+                  : MyMessagBuble(message: msg,);
                 },
               ),
             ),
-            MessageField()
+            MessageField(onValue: (String value) { 
+              provider.sendMessage(value);
+            },)
           ],
         ),
       ),
