@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:s9_widgetapp/config/menu/menu_items.dart';
-import 'package:s9_widgetapp/presentation/screens/buttons_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
+
+  static const name = "home_screen";
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +13,7 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Home"),
        ),
-       body: _HomeView(),
+       body: const _HomeView(),
     );
   }
 }
@@ -51,6 +52,7 @@ class _CustomTile extends StatelessWidget {
       subtitle: Text(item.subTitle),
       onTap: () {
         context.push( item.link );
+        // context.pushNamed( CardsScreen.name );
       },
     );
   }
