@@ -89,9 +89,35 @@ class _ButtonsView extends StatelessWidget {
               style: ButtonStyle(
                 backgroundColor: MaterialStatePropertyAll(Colors.red)
               ),
-            )
+            ),
+
+            CustomButton()
       
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class CustomButton extends StatelessWidget {
+  const CustomButton({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+
+    final color = Theme.of(context).colorScheme;
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: Material(
+        color: color.primary,
+        child: InkWell(
+          onTap: (){},
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: Text("Hola", style: TextStyle(color: Colors.white),),
+          ),
         ),
       ),
     );
