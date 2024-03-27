@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:s9_widgetapp/config/menu/menu_items.dart';
+import 'package:s9_widgetapp/presentation/screens/buttons_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -48,7 +50,7 @@ class _CustomTile extends StatelessWidget {
       title: Text(item.title),
       subtitle: Text(item.subTitle),
       onTap: () {
-        
+        context.push( item.link );
       },
     );
   }

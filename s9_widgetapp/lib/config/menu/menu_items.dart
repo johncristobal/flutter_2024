@@ -24,7 +24,7 @@ const appMenuItem = <MenuItem> [
   MenuItem(
     title: "Tarjetas", 
     subTitle: "estiled", 
-    link: "/card", 
+    link: "/cards", 
     icon: Icons.credit_card
   ),
 
