@@ -4,6 +4,8 @@ import 'package:s9_widgetapp/presentation/screens/buttons_screen.dart';
 import 'package:s9_widgetapp/presentation/screens/cards_screen.dart';
 import 'package:s9_widgetapp/presentation/screens/progress_screen.dart';
 import 'package:s9_widgetapp/presentation/screens/snack_screen.dart';
+import 'package:s9_widgetapp/presentation/screens/tutoria_screen.dart';
+import 'package:s9_widgetapp/presentation/screens/ui_screen.dart';
 
 import '../../presentation/screens/home/home_screen.dart';
 
@@ -39,6 +41,16 @@ final appRouter = GoRouter(
       name: AnimatedScreen.name,
       path: '/animated',
       builder: (context, state) => AnimatedScreen(),
+    ),
+    GoRoute(
+      name: UIControlsScreen.name,
+      path: '/uicontrols',
+      builder: (context, state) => UIControlsScreen(),
+    ),
+    GoRoute(
+      name: TutorialScreen.name,
+      path: '/tutorial',
+      builder: (context, state) => TutorialScreen(),
     ),
   ],
 );
