@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:s9_widgetapp/presentation/screens/animated_screen.dart';
 import 'package:s9_widgetapp/presentation/screens/buttons_screen.dart';
 import 'package:s9_widgetapp/presentation/screens/cards_screen.dart';
+import 'package:s9_widgetapp/presentation/screens/infinite_screen.dart';
 import 'package:s9_widgetapp/presentation/screens/progress_screen.dart';
 import 'package:s9_widgetapp/presentation/screens/snack_screen.dart';
 import 'package:s9_widgetapp/presentation/screens/tutoria_screen.dart';
@@ -51,6 +52,11 @@ final appRouter = GoRouter(
       name: TutorialScreen.name,
       path: '/tutorial',
       builder: (context, state) => TutorialScreen(),
+    ),
+    GoRoute(
+      name: InfiniteScreen.name,
+      path: '/infinite',
+      builder: (context, state) => InfiniteScreen(),
     ),
   ],
 );

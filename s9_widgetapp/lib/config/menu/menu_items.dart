@@ -57,5 +57,11 @@ const appMenuItem = <MenuItem> [
     link: "/tutorial", 
     icon: Icons.pages
   ),
+  MenuItem(
+    title: "Infinite screen", 
+    subTitle: "esta es la buena con pull", 
+    link: "/infinite", 
+    icon: Icons.medical_information
+  ),
 
 ];
