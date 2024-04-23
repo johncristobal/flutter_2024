@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:s9_widgetapp/config/menu/menu_items.dart';
+import 'package:s9_widgetapp/presentation/widgets/drawner_widget.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -9,11 +10,14 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final keyScaffold = GlobalKey<ScaffoldState>();
     return Scaffold(
+      key: keyScaffold,
       appBar: AppBar(
         title: const Text("Home"),
        ),
        body: const _HomeView(),
+       drawer: SideMenu(keyScaffold: keyScaffold)
     );
   }
 }

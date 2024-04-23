@@ -63,5 +63,17 @@ const appMenuItem = <MenuItem> [
     link: "/infinite", 
     icon: Icons.medical_information
   ),
+  MenuItem(
+    title: "Counter screen", 
+    subTitle: "usando riverpood", 
+    link: "/diverpod", 
+    icon: Icons.ad_units
+  ),
+  MenuItem(
+    title: "Cambiar tema", 
+    subTitle: "uuuy", 
+    link: "/theme", 
+    icon: Icons.color_lens
+  ),
 
 ];
