@@ -13,8 +13,8 @@ class AppTheme {
   final bool isDark;
 
   AppTheme({
-    required this.selected,
-    required this.isDark,
+    this.selected = 0,
+    this.isDark = false,
   }) : assert (selected >= 0, "Selected must be greater than zero");
 
   ThemeData getTheme() => ThemeData(
@@ -24,6 +24,14 @@ class AppTheme {
     appBarTheme: AppBarTheme(
       centerTitle: false
     )
+  );
+
+  AppTheme copyWith({
+    int? selected, 
+    bool? isDark
+  }) => AppTheme(
+    selected: selected ?? this.selected,
+    isDark: isDark ?? this.isDark
   );
 
 }
