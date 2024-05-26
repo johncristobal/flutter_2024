@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:s12_cinemapedia/config/ruoter/router.dart';
+import 'package:s12_cinemapedia/config/theme/app_theme.dart';
 
-void main() => runApp(MyApp());
+Future main() async {
+  await dotenv.load(fileName: ".env");
+  runApp(
+    ProviderScope(child: MyApp())
+  );
+}
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Material App',
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Material App Bar'),
-        ),
-        body: Center(
-          child: Container(
-            child: Text('Hello World'),
-          ),
-        ),
-      ),
+    return MaterialApp.router(
+      routerConfig: appRputer,
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme().getTheme(),
+      title: 'Cinemapedia',
     );
   }
 }

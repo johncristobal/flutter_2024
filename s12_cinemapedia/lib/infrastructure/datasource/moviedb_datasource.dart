@@ -1,0 +1,31 @@
+import 'package:dio/dio.dart';
+import 'package:s12_cinemapedia/config/constants/env.dart';
+import 'package:s12_cinemapedia/domain/datasources/movie_datasource.dart';
+import 'package:s12_cinemapedia/domain/entities/movie.dart';
+import 'package:s12_cinemapedia/infrastructure/mappers/movie_mapper.dart';
+import 'package:s12_cinemapedia/infrastructure/models/moviedb/moviedb_response.dart';
+
+class MovieDbDatasource extends MovieDatasource {
+
+  final dio = Dio(BaseOptions(
+    baseUrl: "https://api.themoviedb.org/3",
+    queryParameters: {
+      "api_key": Environment.movieDbKey,
+      "language": "es-MX"
+    }
+  ));
+
+  @override
+  Future<List<Movie>> getNowPlaying({int page = 1}) async {
+    final response = await dio.get("/movie/now_playing");
+    final movieResponse = MovieDbResponse.fromJson(response.data);
+    final List<Movie> movies = movieResponse.results
+    .map(
+      (e) => MovieMapper.movieDBToEntity(e)
+    )
+    .where((element) => element.posterPath != "no-poster")
+    .toList();
+
+    return movies;
+  }
+}
