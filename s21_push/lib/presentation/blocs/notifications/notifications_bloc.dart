@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:equatable/equatable.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:s21_push/domain/entities/push_message.dart';
 import 'package:s21_push/firebase_options.dart';
 
 part 'notifications_event.dart';
@@ -21,6 +24,7 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
 
   NotificationsBloc() : super(const NotificationsState()) {
     on<NotificationsStatusChanged>(_notificationChanged);
+    on<NotificationsReceived>(_notificationReceived);
 
     // verify status
     _initialCheck();
@@ -54,17 +58,28 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
     print(token);
   }
 
-  void _handleRemoteMessage( RemoteMessage message ) {
-    print('Got a message whilst in the foreground!');
-    print('Message data: ${message.data}');
-  
+  void handleRemoteMessage( RemoteMessage message ) {
     if (message.notification == null) return;
-
     print('Message also contained a notification: ${message.notification}');
+
+    final noti = PushMessage(
+      messageId: message.messageId
+      ?.replaceAll(":", "").replaceAll("%", "")
+      ?? "",
+      title: message.notification!.title ?? "",
+      body: message.notification!.body ?? "",
+      sentDate: message.sentTime ?? DateTime.now(),
+      data: message.data,
+      imageUrl: Platform.isAndroid
+      ? message.notification!.android?.imageUrl
+      : message.notification!.apple?.imageUrl
+    );
+
+    add(NotificationsReceived(noti));
   }
 
   void _onForegraoundMessage() {
-    FirebaseMessaging.onMessage.listen(_handleRemoteMessage);
+    FirebaseMessaging.onMessage.listen(handleRemoteMessage);
   }
 
   void _notificationChanged( NotificationsStatusChanged event, Emitter<NotificationsState> emit ) {
@@ -77,9 +92,25 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
     _getFCMT();
   }
 
+  void _notificationReceived( NotificationsReceived event, Emitter<NotificationsState> emit ) {
+    emit(
+      state.copyWih(
+        notifications: [ event.message, ... state.notifications] //list
+      )
+    );
+  }
+
   static Future<void> initFireabase() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
   }
+
+  PushMessage? getMessageById(String id) {
+    final exists = state.notifications.any((element) => element.messageId == id);
+    if(!exists) return null;
+
+    return state.notifications.firstWhere((element) => element.messageId == id);
+  }
+
 }

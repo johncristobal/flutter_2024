@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:s21_push/presentation/blocs/notifications/notifications_bloc.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -17,7 +18,7 @@ class HomeScreen extends StatelessWidget {
           }, icon: Icon(Icons.settings))
         ],
       ),
-      body: _HomeView(),
+      body: const _HomeView(),
     );
   }
 }
@@ -27,11 +28,20 @@ class _HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final notifications = context.watch<NotificationsBloc>().state.notifications;
+
     return ListView.builder(
-      itemCount: 1,
+      itemCount: notifications.length,
       itemBuilder: (context, index) {
+        final notification = notifications[index];
         return ListTile(
-          title: Text("Hi"),
+          title: Text(notification.title),
+          subtitle: Text(notification.body),
+          leading: Image.network(notification.imageUrl ?? "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png"),
+          onTap: (){
+            context.push("/details/${notification.messageId}");
+          },
         );
       },
     );
