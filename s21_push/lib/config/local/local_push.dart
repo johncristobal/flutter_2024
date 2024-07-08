@@ -1,5 +1,7 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+import '../router/app_router.dart';
+
 
 
 class LocalNotifications {
@@ -13,7 +15,7 @@ class LocalNotifications {
   static Future<void> initLocalNotification() async {
     final plugin = FlutterLocalNotificationsPlugin();
     const settingsAndroid = AndroidInitializationSettings(
-      "app_icon"
+      "appicon"
     );
 
     const initSettings = InitializationSettings(
@@ -21,7 +23,8 @@ class LocalNotifications {
     );
 
     await plugin.initialize(
-      initSettings
+      initSettings,
+      onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
     );
   }
 
@@ -48,5 +51,10 @@ class LocalNotifications {
 
     pluggin.show(id, title, body, details, payload: data);
 
+  }
+
+  static void onDidReceiveNotificationResponse( NotificationResponse response) {
+    final id = response.payload;
+    appRouter.push("/details/$id");
   }
 }
