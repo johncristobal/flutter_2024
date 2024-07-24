@@ -1,16 +1,27 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:teslo_shop/features/auth/domain/domain.dart';
 import 'package:teslo_shop/features/auth/infrastructure/infraestructure.dart';
+import 'package:teslo_shop/features/shared/infrastructure/services/key_value_service.dart';
+import 'package:teslo_shop/features/shared/infrastructure/services/storage_service_impl.dart';
 
 final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
+
   final authRepo = AuthRepositoryImpl();
-  return AuthNotifier(authRepo);
+  final keyValueService = KeyValueStorageServiceImpl();
+
+  return AuthNotifier(
+    authRepo,
+    keyValueService
+  );
 });
 
 class AuthNotifier extends StateNotifier<AuthState> {
 
   final AuthRepository authRepository;
-  AuthNotifier(this.authRepository): super(AuthState());
+  final KeyValueService keyValueService;
+  AuthNotifier(this.authRepository, this.keyValueService): super(AuthState()) {
+    checkStatus();
+  }
   
   Future<void> loginUser(String email, String password) async {
     await Future.delayed(const Duration(milliseconds: 500));
@@ -27,7 +38,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   Future<void> logout({ String? errorMsg }) async {
-    // tood: clear token
+    await keyValueService.removeKey("token");
     state = state.copyWith(
       authStatus: AuthStatus.notauth,
       user: null,
@@ -40,11 +51,18 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   void checkStatus() async {
-    
+    final token = await keyValueService.getValue<String>("token");
+    if(token == null) return logout();
+    try {
+      final user = await authRepository.checkAutStatus(token);
+      _setLoggedUser(user);
+    }catch(e) {
+      logout();
+    }
   }
 
-  void _setLoggedUser(User user) {
-    // todo: save token
+  void _setLoggedUser(User user) async {
+    await keyValueService.setKeyValue("token", user.token);
     state = state.copyWith(
       user: user,
       errorMsg: "",
