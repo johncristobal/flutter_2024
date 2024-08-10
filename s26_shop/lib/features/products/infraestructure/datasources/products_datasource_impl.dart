@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:teslo_shop/config/constants/env.dart';
 import 'package:teslo_shop/features/products/domain/domain.dart';
+import 'package:teslo_shop/features/products/infraestructure/errors/product_errors.dart';
 
 import '../mappers/product_mapper.dart';
 
@@ -19,15 +20,43 @@ class ProductDatasourceImpl extends ProductDatasource {
   ));
 
   @override
-  Future<Product> createUpdateProduct(Map<String, dynamic> productLike) {
-    // TODO: implement createUpdateProduct
-    throw UnimplementedError();
+  Future<Product> createUpdateProduct(Map<String, dynamic> productLike) async {
+    try {
+      final String? id = productLike["id"];
+      final String method = (id == null) ? "POST" : "PATCH";
+      final String url = (id == null) ? "/products" : "/products/$id";
+      productLike.remove("id");
+
+      final response = await dio.request(
+        url,
+        data: productLike,
+        options: Options(
+          method: method
+        )
+      );
+
+      final product = ProductMapper.jsonToEntity(response.data);
+      return product;
+    } catch(e) {
+      throw Exception();
+    }
   }
 
   @override
-  Future<Product> getProductsById(String id) {
-    // TODO: implement getProductsById
-    throw UnimplementedError();
+  Future<Product> getProductsById(String id) async {
+    try {
+      final resp = await dio.get("/products/$id");
+      final product = ProductMapper.jsonToEntity(resp.data);
+      return product;
+    } on DioException catch(e){
+      if(e.response!.statusCode == 404) {
+        throw ProductNotFound();
+      }
+      throw Exception();
+    } catch(e) {
+      print(e);
+      throw Exception();
+    }
   }
 
   @override
