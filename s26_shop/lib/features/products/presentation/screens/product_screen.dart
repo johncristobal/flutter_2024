@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:teslo_shop/features/products/presentation/providers/product_provider.dart';
+import 'package:teslo_shop/features/shared/shared.dart';
 import 'package:teslo_shop/features/shared/widgets/custom_product_field.dart';
 
 import '../../../shared/widgets/full_screen_loader.dart';
@@ -28,9 +31,18 @@ class ProductScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text("Editar producto"),
         actions: [
-          IconButton(onPressed: () {
-
-          }, icon: const Icon(Icons.camera))
+          IconButton(onPressed: () async {
+            final photo = await CameraGalleryServiceImpl().takePhoto();
+            if (photo == null) return;
+            ref.read( productFormProvider(productState.product!).notifier )
+            .updateProductImage(photo);
+          }, icon: const Icon(Icons.camera)),
+          IconButton(onPressed: () async {
+            final photo = await CameraGalleryServiceImpl().selectPhoto();
+            if (photo == null) return;
+            ref.read( productFormProvider(productState.product!).notifier )
+            .updateProductImage(photo);
+          }, icon: const Icon(Icons.browse_gallery))
         ],
       ),
       body: Center(
@@ -68,8 +80,7 @@ class _ProductView extends ConsumerWidget {
     final textStyles = Theme.of(context).textTheme;
 
     return ListView(
-      children: [
-    
+      children: [    
           SizedBox(
             height: 250,
             width: 600,
@@ -173,7 +184,6 @@ class _ProductInformation extends ConsumerWidget {
   }
 }
 
-
 class _SizeSelector extends StatelessWidget {
   final List<String> selectedSizes;
   final List<String> sizes = const['XS','S','M','L','XL','XXL','XXXL'];
@@ -247,30 +257,45 @@ class _GenderSelector extends StatelessWidget {
   }
 }
 
-
 class _ImageGallery extends StatelessWidget {
   final List<String> images;
   const _ImageGallery({required this.images});
 
   @override
   Widget build(BuildContext context) {
+ 
+    if(images.isEmpty) {
+      return ClipRRect(
+            borderRadius: const BorderRadius.all(Radius.circular(20)),
+            child: Image.asset('assets/images/no-image.jpg', fit: BoxFit.cover ));
+    }
 
     return PageView(
       scrollDirection: Axis.horizontal,
       controller: PageController(
         viewportFraction: 0.7
       ),
-      children: images.isEmpty
-        ? [ ClipRRect(
+      children: images.map((e) {
+
+        late ImageProvider imageProvider;
+        if(e.startsWith("http")) {
+          imageProvider = NetworkImage(e);
+        } else {
+          imageProvider = FileImage( File(e) );
+        }
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 9.0),
+          child: ClipRRect(
             borderRadius: const BorderRadius.all(Radius.circular(20)),
-            child: Image.asset('assets/images/no-image.jpg', fit: BoxFit.cover )) 
-        ]
-        : images.map((e){
-          return ClipRRect(
-            borderRadius: const BorderRadius.all(Radius.circular(20)),
-            child: Image.network(e, fit: BoxFit.cover,),
-          );
-      }).toList(),
+            child: FadeInImage(
+              fit: BoxFit.cover,
+              image: imageProvider,
+              placeholder: const AssetImage("assets/loaders/bottle-loader.gif"),
+            )
+          ),
+        );
+      },).toList()
     );
   }
 }
